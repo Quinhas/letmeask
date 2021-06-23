@@ -44,9 +44,9 @@ $ npm install
 $ yarn install
 
 # Execute a aplicação
-$ npm run dev
+$ npm start
 # ou
-$ yarn dev
+$ yarn start
 
 # Abra http://localhost:3000 no seu navegador para ver a aplicação rodando!
 ```
