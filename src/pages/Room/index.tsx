@@ -1,12 +1,21 @@
+import {
+  Box,
+  Button,
+  Flex,
+  Heading,
+  Image,
+  Text,
+  Textarea,
+  useColorMode,
+} from "@chakra-ui/react";
 import { FormEvent, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Button } from "src/components/Button";
+import { Logo } from "src/components/Logo";
 import { RoomCode } from "src/components/RoomCode";
+import { ToggleTheme } from "src/components/ToggleTheme";
 import { useAuth } from "src/hooks/useAuth";
 import { database } from "src/services/firebase";
 import logoImg from "../../assets/images/logo.svg";
-
-import "../../styles/room.scss";
 
 type Question = {
   id: string;
@@ -42,6 +51,7 @@ export function Room() {
   const [newQuestion, setNewQuestion] = useState("");
   const [questions, setQuestions] = useState<Question[]>([]);
   const [title, setTitle] = useState("");
+  const { colorMode } = useColorMode();
 
   const roomId = params.id;
 
@@ -93,43 +103,102 @@ export function Room() {
   }
 
   return (
-    <div id="page-room">
-      <header>
-        <div className="content">
-          <img src={logoImg} alt="Letmeask" />
+    <>
+      <Box
+        as={"header"}
+        p={"1.5rem"}
+        borderBottom={"1px solid"}
+        borderColor={
+          colorMode === "light" ? "blackAlpha.100" : "whiteAlpha.100"
+        }
+      >
+        <Flex
+          maxW={"80rem"}
+          margin={"0 auto"}
+          justify={"space-between"}
+          align={"center"}
+        >
+          {/* <Image maxH={"2.875rem"} src={logoImg} alt="Letmeask" /> */}
+          <Flex alignSelf={"center"}>
+            <Logo style={{maxHeight: "2.875rem"}}/>
+          </Flex>
           <RoomCode code={roomId} />
-        </div>
-      </header>
+          <ToggleTheme />
+        </Flex>
+      </Box>
 
-      <main>
-        <div className="room-title">
-          <h1>Sala {title}</h1>
-          {questions.length > 0 && <span>{questions.length} pergunta{questions.length > 1 && 's'}</span>}
-        </div>
+      <Box as={"main"} maxW={"55rem"} margin={"0 auto"}>
+        <Flex margin={"2rem 0 1.5rem"} align={"center"}>
+          <Heading fontSize={"1.5rem"} color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}>
+            Sala {title}
+          </Heading>
+          {questions.length > 0 && (
+            <Text
+              ml={"1rem"}
+              bg={"#e559f9"}
+              borderRadius={"lg"}
+              p={"0.5rem 1rem"}
+              color={colorMode === "light" ? "blackAlpha.100" : "whiteAlpha.100"}
+              fontWeight={500}
+              fontSize={"0.875rem"}
+            >
+              {questions.length} pergunta{questions.length > 1 && "s"}
+            </Text>
+          )}
+        </Flex>
 
         <form onSubmit={handleSendQuestion}>
-          <textarea
+          <Textarea
             placeholder="O que você quer perguntar?"
             value={newQuestion}
             onChange={(event) => setNewQuestion(event.target.value)}
+            w={"100%"}
+            border={0}
+            padding={"1rem"}
+            bg={colorMode === "light" ? "white" : "black"}
+            color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
+            boxShadow={"sm"}
+            resize={"vertical"}
+            minH={"8.125rem"}
           />
-          <div className="form-footer">
+          <Flex justify={"space-between"} align={"center"} mt={"1rem"}>
             {user ? (
-              <div className="user-info">
-                <img src={user.avatar} alt={user.name} />
-                <span>{user.name}</span>
-              </div>
+              <Flex align={"center"}>
+                <Image
+                  boxSize={"2rem"}
+                  borderRadius={"50%"}
+                  src={user.avatar}
+                  alt={user.name}
+                />
+                <Text
+                  ml={"0.5rem"}
+                  color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
+                  fontWeight={500}
+                  fontSize={"0.875rem"}
+                >
+                  {user.name}
+                </Text>
+              </Flex>
             ) : (
-              <span>
-                Para enviar uma pergunta, <button>faça seu login</button>.
-              </span>
+              <Text fontSize={"0.875rem"} color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"} fontWeight={500}>
+                Para enviar uma pergunta,{" "}
+                <Button
+                  variant={"link"}
+                  color={"primaryApp.500"}
+                  fontSize={"0.875rem"}
+                  fontWeight={500}
+                >
+                  faça seu login
+                </Button>
+                .
+              </Text>
             )}
-            <Button type="submit" disabled={!user}>
+            <Button type="submit" disabled={!user} variant={"app"}>
               Enviar pergunta
             </Button>
-          </div>
+          </Flex>
         </form>
-      </main>
-    </div>
+      </Box>
+    </>
   );
 }

@@ -1,19 +1,32 @@
 import { useHistory } from "react-router-dom";
 
 import illustrationImg from "../../assets/images/illustration.svg";
-import logoImg from "../../assets/images/logo.svg";
-import googleIconImg from "../../assets/images/google-icon.svg";
+import logoLightImg from "../../assets/images/logo.svg";
+import logoDarkImg from "../../assets/images/logo-darkmode.svg";
+import { FaGoogle } from "react-icons/fa";
 
-import "../../styles/auth.scss";
-import { Button } from "src/components/Button";
 import { useAuth } from "src/hooks/useAuth";
 import { FormEvent, useState } from "react";
 import { database } from "src/services/firebase";
+import {
+  Flex,
+  Image,
+  Heading,
+  Text,
+  Button,
+  FormControl,
+  Input,
+  useColorMode,
+  LightMode,
+} from "@chakra-ui/react";
+import { ToggleTheme } from "src/components/ToggleTheme";
+import { Logo } from "src/components/Logo";
 
 export function Home() {
   const history = useHistory();
   const { user, signInWithGoogle } = useAuth();
   const [roomCode, setRoomCode] = useState("");
+  const { colorMode } = useColorMode();
 
   async function handleGoogleButton() {
     if (!user) {
@@ -40,34 +53,108 @@ export function Home() {
   }
 
   return (
-    <div id="page-auth">
-      <aside>
-        <img
-          src={illustrationImg}
-          alt="Ilustração simbolizando perguntas e respostas"
-        />
-        <strong>Crie salas de Q&amp;A ao-vivo</strong>
-        <p>Tire as dúvidas da sua audiência em tempo-real</p>
-      </aside>
-      <main>
-        <div className="main-content">
-          <img src={logoImg} alt="Letmeask" />
-          <button className="create-room" onClick={handleGoogleButton}>
-            <img src={googleIconImg} alt="Logo do Google" />
-            Crie sua sala com o Google
-          </button>
-          <div className="separator">ou entre em uma sala</div>
+    <Flex align={"stretch"} h={"100vh"} id="page-auth">
+      <Flex flex={7} direction={"column"} bg={"primaryApp.500"} color={"white"}>
+        <Flex px={"5rem"} pt={"2rem"}>
+          <ToggleTheme />
+        </Flex>
+        <Flex flexDirection={"column"} justify={"center"} p={"2.5rem 5rem"}>
+          <Image
+            src={illustrationImg}
+            maxW={"20rem"}
+            alt="Ilustração simbolizando perguntas e respostas"
+          />
+          <Heading
+            fontWeight="700"
+            fontSize={"2.5rem"}
+            lineHeight={"2.625rem"}
+            mt={"1rem"}
+            color={colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"}
+          >
+            Crie salas de Q&amp;A ao-vivo
+          </Heading>
+          <Text
+            fontSize={"1.5rem"}
+            lineHeight={"2rem"}
+            mt={"1rem"}
+            color={colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"}
+          >
+            Tire as dúvidas da sua audiência em tempo-real
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex flex={8} m={"0 2rem"} align={"center"} justify={"center"}>
+        <Flex
+          className="main-content"
+          direction={"column"}
+          w={"100%"}
+          maxW={"21rem"}
+          align={"stretch"}
+          textAlign={"center"}
+        >
+          <Flex alignSelf={"center"}>
+            <Logo />
+          </Flex>
+          <LightMode>
+            <Button
+              leftIcon={<FaGoogle />}
+              colorScheme={"google"}
+              onClick={handleGoogleButton}
+              mt={"4rem"}
+              h={"3.125rem"}
+              fontWeight={500}
+            >
+              Crie sua sala com o Google
+            </Button>
+          </LightMode>
+          <Flex
+            fontSize={"0.875rem"}
+            color={colorMode === "light" ? "blackAlpha.500" : "whiteAlpha.500"}
+            margin={"2rem 0"}
+            align={"center"}
+            _before={{
+              content: `''`,
+              flex: 1,
+              height: "1px",
+              background: `${
+                colorMode === "light" ? "blackAlpha.500" : "whiteAlpha.500"
+              }`,
+              marginRight: "1rem",
+            }}
+            _after={{
+              content: `''`,
+              flex: 1,
+              height: "1px",
+              background: `${
+                colorMode === "light" ? "blackAlpha.500" : "whiteAlpha.500"
+              }`,
+              marginLeft: "1rem",
+            }}
+          >
+            ou entre em uma sala
+          </Flex>
           <form onSubmit={handleJoinRoom}>
-            <input
+            <Input
               type="text"
               placeholder="Digite o código da sala"
               value={roomCode}
               onChange={(event) => setRoomCode(event.target.value)}
+              bg={colorMode === "light" ? "white" : "black"}
+              color={
+                colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"
+              }
+              h={"3.125rem"}
+              borderRadius={"0.5rem"}
+              p={"0 1rem"}
+              border={"1px solid"}
+              w={"100%"}
             />
-            <Button type="submit">Entrar na sala</Button>
+            <Button type="submit" variant={"app"} w={"100%"} mt={"1rem"}>
+              Entrar na sala
+            </Button>
           </form>
-        </div>
-      </main>
-    </div>
+        </Flex>
+      </Flex>
+    </Flex>
   );
 }

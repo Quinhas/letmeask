@@ -51,6 +51,11 @@ $ yarn start
 # Abra http://localhost:3000 no seu navegador para ver a aplicação rodando!
 ```
 
+## 🔥 Desafios
+
+- [ ] Responsivo
+- [x] Dark Theme
+
 ## 📝 Licença
 
 Este projeto está licenciado sob a Licença MIT. Veja o arquivo [LICENSE](LICENSE) para obter mais detalhes.
