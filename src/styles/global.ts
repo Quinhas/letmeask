@@ -1,5 +1,5 @@
 import { extendTheme } from "@chakra-ui/react";
-import { mode } from "@chakra-ui/theme-tools"
+import { mode } from "@chakra-ui/theme-tools";
 import { mediaQueries, scrollbar } from "./custom";
 
 const theme = extendTheme({
@@ -47,7 +47,7 @@ const theme = extendTheme({
         font: "400 1rem 'Roboto', sans-serif",
       },
       ...mediaQueries,
-      ...scrollbar
+      ...scrollbar,
     }),
   },
   fonts: {
@@ -78,6 +78,18 @@ const theme = extendTheme({
       700: "#8B180E",
       800: "#5C100A",
       900: "#2E0805",
+    },
+    danger: {
+      50: "#FCE8EC",
+      100: "#F7C0C9",
+      200: "#F297A7",
+      300: "#ED6E85",
+      400: "#E84562",
+      500: "#E31C40",
+      600: "#B51733",
+      700: "#881126",
+      800: "#5B0B1A",
+      900: "#2D060D",
     },
   },
 });

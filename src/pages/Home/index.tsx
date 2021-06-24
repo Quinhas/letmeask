@@ -1,8 +1,6 @@
 import { useHistory } from "react-router-dom";
 
 import illustrationImg from "../../assets/images/illustration.svg";
-import logoLightImg from "../../assets/images/logo.svg";
-import logoDarkImg from "../../assets/images/logo-darkmode.svg";
 import { FaGoogle } from "react-icons/fa";
 
 import { useAuth } from "src/hooks/useAuth";
@@ -14,10 +12,10 @@ import {
   Heading,
   Text,
   Button,
-  FormControl,
   Input,
   useColorMode,
   LightMode,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ToggleTheme } from "src/components/ToggleTheme";
 import { Logo } from "src/components/Logo";
@@ -27,6 +25,7 @@ export function Home() {
   const { user, signInWithGoogle } = useAuth();
   const [roomCode, setRoomCode] = useState("");
   const { colorMode } = useColorMode();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   async function handleGoogleButton() {
     if (!user) {
@@ -49,21 +48,44 @@ export function Home() {
       return;
     }
 
+    if (roomRef.val().closedAt) {
+      alert("Room already closed");
+      return;
+    }
+
     history.push(`rooms/${roomCode}`);
   }
 
   return (
-    <Flex align={"stretch"} h={"100vh"} id="page-auth">
-      <Flex flex={7} direction={"column"} bg={"primaryApp.500"} color={"white"}>
+    <Flex
+      align={"stretch"}
+      minH={"100vh"}
+      direction={{ base: "column", md: "row" }}
+    >
+      <Flex
+        flex={7}
+        direction={"column"}
+        justify={"space-between"}
+        bg={"primaryApp.500"}
+        color={"white"}
+        gridGap={"2rem"}
+      >
         <Flex px={"5rem"} pt={"2rem"}>
           <ToggleTheme />
         </Flex>
-        <Flex flexDirection={"column"} justify={"center"} p={"2.5rem 5rem"}>
-          <Image
-            src={illustrationImg}
-            maxW={"20rem"}
-            alt="Ilustração simbolizando perguntas e respostas"
-          />
+        <Flex
+          flexDirection={"column"}
+          justify={"center"}
+          px={"5rem"}
+          pb={"5rem"}
+        >
+          {!isMobile && (
+            <Image
+              src={illustrationImg}
+              maxW={"20rem"}
+              alt="Ilustração simbolizando perguntas e respostas"
+            />
+          )}
           <Heading
             fontWeight="700"
             fontSize={"2.5rem"}
@@ -83,7 +105,7 @@ export function Home() {
           </Text>
         </Flex>
       </Flex>
-      <Flex flex={8} m={"0 2rem"} align={"center"} justify={"center"}>
+      <Flex flex={8} m={"2rem"} align={"center"} justify={"center"}>
         <Flex
           className="main-content"
           direction={"column"}

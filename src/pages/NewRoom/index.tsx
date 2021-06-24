@@ -1,7 +1,6 @@
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
 import illustrationImg from "../../assets/images/illustration.svg";
-import logoImg from "../../assets/images/logo.svg";
 
 import { useAuth } from "src/hooks/useAuth";
 import { FormEvent, useState } from "react";
@@ -12,10 +11,10 @@ import {
   Heading,
   Text,
   Image,
-  FormControl,
   Input,
   Link,
   useColorMode,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { ToggleTheme } from "src/components/ToggleTheme";
 import { Logo } from "src/components/Logo";
@@ -26,6 +25,7 @@ export function NewRoom() {
   const [newRoom, setNewRoom] = useState("");
   const [creatingRoom, setIsCreatingRoom] = useState(false);
   const { colorMode } = useColorMode();
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   async function handleCreateRoom(ev: FormEvent) {
     ev.preventDefault();
@@ -49,17 +49,35 @@ export function NewRoom() {
   }
 
   return (
-    <Flex align={"stretch"} h={"100vh"} id="page-auth">
-      <Flex flex={7} direction={"column"} bg={"primaryApp.500"} color={"white"}>
+    <Flex
+      align={"stretch"}
+      h={"100vh"}
+      direction={{ base: "column", md: "row" }}
+    >
+      <Flex
+        flex={7}
+        direction={"column"}
+        justify={"space-between"}
+        bg={"primaryApp.500"}
+        color={"white"}
+        gridGap={"2rem"}
+      >
         <Flex px={"5rem"} pt={"2rem"}>
           <ToggleTheme />
         </Flex>
-        <Flex flexDirection={"column"} justify={"center"} p={"2.5rem 5rem"}>
-          <Image
-            src={illustrationImg}
-            maxW={"20rem"}
-            alt="Ilustração simbolizando perguntas e respostas"
-          />
+        <Flex
+          flexDirection={"column"}
+          justify={"center"}
+          px={"5rem"}
+          pb={"5rem"}
+        >
+          {!isMobile && (
+            <Image
+              src={illustrationImg}
+              maxW={"20rem"}
+              alt="Ilustração simbolizando perguntas e respostas"
+            />
+          )}
           <Heading
             fontWeight="700"
             fontSize={"2.5rem"}

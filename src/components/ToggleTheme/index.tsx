@@ -8,7 +8,7 @@ export function ToggleTheme() {
       aria-label="Toggle Theme"
       icon={colorMode === "light" ? <FaMoon /> : <FaSun />}
       onClick={toggleColorMode}
-      variant={'outline'}
+      variant={'solid'}
       colorScheme={'primaryApp'}
       borderColor={colorMode === "light" ? "black" : "white"}
       borderRadius={"md"}

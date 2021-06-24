@@ -37,6 +37,8 @@ export function RoomCode(props: RoomCodeProps) {
       borderColor={"primaryApp.500"}
       p={0}
       onClick={copyRoomCodeToClipboard}
+      colorScheme={'primaryApp'}
+      variant={'outline'}
     >
       <Flex
         bg={"primaryApp.500"}
