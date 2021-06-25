@@ -31,7 +31,7 @@ export function JoinRoom() {
       return;
     }
 
-    history.push(`rooms/${roomCode}`);
+    history.push(`/rooms/${roomCode}`);
   }
 
   return (
