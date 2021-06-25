@@ -1,4 +1,11 @@
-import { Box, Flex, Text, Image, useColorMode } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  useColorMode,
+  Avatar,
+  useStyleConfig,
+} from "@chakra-ui/react";
 import { ReactNode } from "react";
 
 type QuestionProps = {
@@ -8,16 +15,20 @@ type QuestionProps = {
     avatar: string;
   };
   children?: ReactNode;
+  variant?: string;
 };
 
-export function Question({ content, author, children }: QuestionProps) {
+export function Question({
+  content,
+  author,
+  children,
+  variant,
+}: QuestionProps) {
   const { colorMode } = useColorMode();
+  const styles = useStyleConfig("Question", { variant });
   return (
     <Box
-      bg={colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"}
-      borderRadius={"0.5rem"}
-      boxShadow={"sm"}
-      padding={"1.5rem"}
+      __css={styles}
       className={"question"}
       sx={{ "& + .question": { marginTop: "0.5rem" } }}
     >
@@ -27,15 +38,16 @@ export function Question({ content, author, children }: QuestionProps) {
       <Flex
         as={"footer"}
         justify={"space-between"}
-        align={"center"}
+        align={{ base: "flex-end", md: "center" }}
         mt={"1.5rem"}
       >
         <Flex align={"center"}>
-          <Image
+          <Avatar
             boxSize={"2rem"}
             borderRadius={"50%"}
             src={author.avatar}
             alt={author.name}
+            bg={"primaryApp.600"}
           />
           <Text
             ml={"0.5rem"}

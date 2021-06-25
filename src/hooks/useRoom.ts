@@ -63,8 +63,9 @@ export function useRoom(roomId: string) {
       );
 
       const questionsSorted = parsedQuestions
-        .sort((a, b) => a.likeCount - b.likeCount)
-        .reverse();
+        .sort((a, b) => b.likeCount - a.likeCount)
+        .sort((a, b) => Number(b.isHighlighted) - Number(a.isHighlighted))
+        .sort((a, b) => Number(a.isAnswered) - Number(b.isAnswered));
 
       setTitle(databaseRoom.title);
       setAuthorId(databaseRoom.authorId);

@@ -3,33 +3,14 @@ import { useHistory } from "react-router-dom";
 import { FaGoogle } from "react-icons/fa";
 
 import { useAuth } from "src/hooks/useAuth";
-import { FormEvent, useState } from "react";
-import { database } from "src/services/firebase";
-import {
-  Flex,
-  Button,
-  Input,
-  useColorMode,
-  LightMode,
-  FormControl,
-  FormLabel,
-  FormErrorMessage,
-  OtherProps,
-} from "@chakra-ui/react";
+import { Flex, Button, useColorMode, LightMode } from "@chakra-ui/react";
 import { Logo } from "src/components/Logo";
 import { Aside } from "src/components/Aside";
-import { Field, Formik, FormikHelpers, FormikProps } from "formik";
 import { LoginForm } from "src/components/LoginForm";
-
-type FormValues = {
-  email: string;
-  password: string;
-};
 
 export function Login() {
   const history = useHistory();
   const { user, signInWithGoogle } = useAuth();
-  const [roomCode, setRoomCode] = useState("");
   const { colorMode } = useColorMode();
 
   async function handleGoogleButton() {
@@ -37,40 +18,14 @@ export function Login() {
       await signInWithGoogle();
     }
 
-    history.push("/rooms/");
-  }
-
-  async function handleLoginWithEmail(
-    values: { email: string },
-    actions: FormikHelpers<FormValues>
-  ) {}
-
-  async function handleJoinRoom(ev: FormEvent) {
-    ev.preventDefault();
-    if (roomCode.trim() === "") {
-      return;
-    }
-
-    const roomRef = await database.ref(`rooms/${roomCode}`).get();
-    console.log(roomRef);
-    if (!roomRef.exists()) {
-      alert("Room does not exists.");
-      return;
-    }
-
-    if (roomRef.val().closedAt) {
-      alert("Room already closed");
-      return;
-    }
-
-    history.push(`rooms/${roomCode}`);
+    history.push("/");
   }
 
   return (
     <Flex
       align={"stretch"}
-      minH={"100vh"}
-      direction={{ base: "column", md: "row" }}
+      h={"100vh"}
+      direction={{ base: "column-reverse", md: "row" }}
     >
       <Aside />
       <Flex flex={8} m={"2rem"} align={"center"} justify={"center"}>
@@ -90,7 +45,7 @@ export function Login() {
               leftIcon={<FaGoogle />}
               colorScheme={"google"}
               onClick={handleGoogleButton}
-              mt={"4rem"}
+              mt={"2rem"}
               h={"3.125rem"}
               fontWeight={500}
             >

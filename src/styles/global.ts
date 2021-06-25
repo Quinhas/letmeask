@@ -4,6 +4,26 @@ import { mediaQueries, scrollbar } from "./custom";
 
 const theme = extendTheme({
   components: {
+    Question: {
+      baseStyle: (props) => ({
+        background: mode("whiteAlpha.900", "blackAlpha.900")(props),
+        borderRadius: "0.5rem",
+        boxShadow: "sm",
+        boxSizing: 'border-box',
+        padding: "1.5rem",
+        transition: "0.3s",
+      }),
+      variants: {
+        highlighted: (props) => ({
+          border: "3px solid",
+          borderColor: "secondaryApp.500",
+          transform: "scale(1.02)",
+        }),
+        answered: (props) => ({
+          background: mode("blackAlpha.100", "blackAlpha.600")(props),
+        }),
+      },
+    },
     Button: {
       variants: {
         app: (props) => ({

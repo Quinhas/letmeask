@@ -7,12 +7,22 @@ import { auth, firebase } from "src/services/firebase";
 type User = {
   id: string;
   name: string;
-  avatar: string;
+  avatar?: string;
 };
 
 type AuthContextType = {
   user: User | undefined;
   signInWithGoogle: () => Promise<void>;
+  createUserWithEmailAndPassword: (
+    email: string,
+    password: string,
+    name: string
+  ) => Promise<void>;
+  signInWithEmailAndPassword: (
+    email: string,
+    password: string
+  ) => Promise<void>;
+  signOut: () => Promise<void>;
 };
 
 type AuthContextProviderProps = {
@@ -30,23 +40,62 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         const { displayName, photoURL, uid } = user;
-        if (!displayName || !photoURL) {
-          throw new Error("Missing information from Google Account.");
+        if (!displayName) {
+          throw new Error("Missing name");
         }
 
         setUser({
           id: uid,
           name: displayName,
-          avatar: photoURL,
+          avatar: photoURL || undefined,
         });
+        setLoading(false);
+      } else {
+        setUser(undefined);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
       unsubscribe();
     };
   }, []);
+
+  async function createUserWithEmailAndPassword(
+    email: string,
+    password: string,
+    name: string
+  ) {
+    const result = await auth.createUserWithEmailAndPassword(email, password);
+    if (result.user) {
+      await result.user.updateProfile({
+        displayName: name,
+      });
+      const { displayName, photoURL, uid } = result.user;
+
+      setUser({
+        id: uid,
+        name: displayName || name,
+        avatar: photoURL || undefined,
+      });
+    }
+  }
+
+  async function signInWithEmailAndPassword(email: string, password: string) {
+    const result = await auth.signInWithEmailAndPassword(email, password);
+    if (result.user) {
+      const { displayName, photoURL, uid } = result.user;
+      if (!displayName) {
+        throw new Error("Missing name.");
+      }
+
+      setUser({
+        id: uid,
+        name: displayName,
+        avatar: photoURL || undefined,
+      });
+    }
+  }
 
   async function signInWithGoogle() {
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -63,6 +112,10 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
         avatar: photoURL,
       });
     }
+  }
+
+  async function signOut() {
+    await auth.signOut();
   }
 
   if (loading) {
@@ -92,7 +145,15 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        signInWithGoogle,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        signOut,
+      }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

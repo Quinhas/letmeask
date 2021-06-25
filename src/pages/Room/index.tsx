@@ -1,21 +1,19 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Flex,
   Heading,
-  Image,
   Text,
   Textarea,
   useColorMode,
   Link,
+  Avatar,
 } from "@chakra-ui/react";
 import { FormEvent, useState } from "react";
-import { FaRegThumbsUp, FaThumbsUp } from "react-icons/fa";
-import { useParams } from "react-router-dom";
+import { FaChalkboardTeacher, FaRegThumbsUp, FaThumbsUp } from "react-icons/fa";
+import { useHistory, useParams } from "react-router-dom";
 import { Logo } from "src/components/Logo";
 import { Question } from "src/components/Question";
-import { RoomCode } from "src/components/RoomCode";
 import { ToggleTheme } from "src/components/ToggleTheme";
 import { useAuth } from "src/hooks/useAuth";
 import { useRoom } from "src/hooks/useRoom";
@@ -27,16 +25,19 @@ type RoomParams = {
 };
 
 export function Room() {
+  const [newQuestion, setNewQuestion] = useState("");
+  const [sendingQuestion, setSendingQuestion] = useState(false);
   const { user } = useAuth();
   const params = useParams<RoomParams>();
-  const [newQuestion, setNewQuestion] = useState("");
   const { colorMode } = useColorMode();
+  const history = useHistory();
 
   const roomId = params.id;
   const { questions, title } = useRoom(roomId);
 
   async function handleSendQuestion(ev: FormEvent) {
     ev.preventDefault();
+    setSendingQuestion(true);
     if (newQuestion.trim() === "") {
       return;
     }
@@ -49,7 +50,7 @@ export function Room() {
       content: newQuestion,
       author: {
         name: user.name,
-        avatar: user.avatar,
+        avatar: user.avatar || null,
       },
       isHighlighted: false,
       isAnswered: false,
@@ -61,6 +62,7 @@ export function Room() {
     } catch (error) {
       console.log(error);
     }
+    setSendingQuestion(false);
   }
 
   async function handleLikeQuestion(
@@ -94,7 +96,6 @@ export function Room() {
         }
         justify={"space-between"}
         align={"center"}
-        direction={{ base: "column", md: "row" }}
         gridGap={"0.5rem"}
       >
         <Flex alignSelf={"center"}>
@@ -103,12 +104,20 @@ export function Room() {
           </Link>
         </Flex>
         <Flex gridGap={"0.5rem"}>
+          <Button
+            leftIcon={<FaChalkboardTeacher />}
+            colorScheme={"secondaryApp"}
+            onClick={() => history.push("/")}
+            fontWeight={500}
+          >
+            Minhas Salas
+          </Button>
           <ToggleTheme />
         </Flex>
       </Flex>
 
       <Box as={"main"} maxW={{ base: "80%", md: "60%" }} margin={"0 auto"}>
-        <Flex margin={"2rem 0 1.5rem"} align={"center"}>
+        <Flex margin={"2rem 0 1.5rem"} align={"center"} gridGap={"1rem"}>
           <Heading
             fontSize={"1.5rem"}
             color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
@@ -117,12 +126,11 @@ export function Room() {
           </Heading>
           {questions.length > 0 && (
             <Text
-              ml={"1rem"}
-              bg={"#e559f9"}
-              borderRadius={"lg"}
+              bg={"secondaryApp.500"}
+              borderRadius={"md"}
               p={"0.5rem 1rem"}
               color={
-                colorMode === "light" ? "blackAlpha.900" : "whiteAlpha.900"
+                colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
               }
               fontWeight={500}
               fontSize={"0.875rem"}
@@ -149,11 +157,12 @@ export function Room() {
           <Flex justify={"space-between"} align={"center"} mt={"1rem"}>
             {user ? (
               <Flex align={"center"}>
-                <Image
+                <Avatar
                   boxSize={"2rem"}
                   borderRadius={"50%"}
                   src={user.avatar}
                   alt={user.name}
+                  bg={"primaryApp.600"}
                 />
                 <Text
                   ml={"0.5rem"}
@@ -186,7 +195,13 @@ export function Room() {
                 .
               </Text>
             )}
-            <Button type="submit" disabled={!user} variant={"app"}>
+            <Button
+              type="submit"
+              disabled={!user || sendingQuestion}
+              isLoading={sendingQuestion}
+              variant={"app"}
+              onClick={handleSendQuestion}
+            >
               Enviar pergunta
             </Button>
           </Flex>
@@ -199,23 +214,32 @@ export function Room() {
                 key={question.id}
                 content={question.content}
                 author={question.author}
+                variant={
+                  question.isAnswered
+                    ? "answered"
+                    : question.isHighlighted
+                    ? "highlighted"
+                    : ""
+                }
               >
-                <Button
-                  aria-label="Like question"
-                  type="button"
-                  leftIcon={
-                    question.likeId ? <FaThumbsUp /> : <FaRegThumbsUp />
-                  }
-                  border={0}
-                  variant={"ghost"}
-                  colorScheme={"primaryApp"}
-                  color={question.likeId ? "primaryApp.500" : "gray.400"}
-                  onClick={() =>
-                    handleLikeQuestion(question.id, question.likeId)
-                  }
-                >
-                  {question.likeCount > 0 && question.likeCount}
-                </Button>
+                {!question.isAnswered && (
+                  <Button
+                    aria-label="Like question"
+                    type="button"
+                    leftIcon={
+                      question.likeId ? <FaThumbsUp /> : <FaRegThumbsUp />
+                    }
+                    border={0}
+                    variant={"ghost"}
+                    colorScheme={"primaryApp"}
+                    color={question.likeId ? "primaryApp.500" : "gray.400"}
+                    onClick={() =>
+                      handleLikeQuestion(question.id, question.likeId)
+                    }
+                  >
+                    {question.likeCount > 0 && question.likeCount}
+                  </Button>
+                )}
               </Question>
             );
           })}

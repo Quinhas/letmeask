@@ -1,7 +1,5 @@
 import { Link as RouterLink, useHistory } from "react-router-dom";
 
-import illustrationImg from "../../assets/images/illustration.svg";
-
 import { useAuth } from "src/hooks/useAuth";
 import { FormEvent, useState } from "react";
 import { database } from "src/services/firebase";
@@ -10,13 +8,10 @@ import {
   Flex,
   Heading,
   Text,
-  Image,
   Input,
   Link,
   useColorMode,
-  useBreakpointValue,
 } from "@chakra-ui/react";
-import { ToggleTheme } from "src/components/ToggleTheme";
 import { Logo } from "src/components/Logo";
 import { Aside } from "src/components/Aside";
 
@@ -26,7 +21,6 @@ export function NewRoom() {
   const [newRoom, setNewRoom] = useState("");
   const [creatingRoom, setIsCreatingRoom] = useState(false);
   const { colorMode } = useColorMode();
-  const isMobile = useBreakpointValue({ base: true, md: false });
 
   async function handleCreateRoom(ev: FormEvent) {
     ev.preventDefault();
@@ -53,7 +47,7 @@ export function NewRoom() {
     <Flex
       align={"stretch"}
       h={"100vh"}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: "column-reverse", md: "row" }}
     >
       <Aside
         heading={"Toda pergunta tem uma resposta."}
@@ -67,7 +61,7 @@ export function NewRoom() {
           align={"stretch"}
           textAlign={"center"}
         >
-          <Flex alignSelf={"center"}>
+          <Flex alignSelf={"center"} as={RouterLink} to="/">
             <Logo />
           </Flex>
           <Heading
@@ -100,6 +94,7 @@ export function NewRoom() {
               w={"100%"}
               mt={"1rem"}
               isLoading={creatingRoom}
+              disabled={!newRoom}
             >
               Criar sala
             </Button>
@@ -110,7 +105,7 @@ export function NewRoom() {
             mt={"1rem"}
           >
             Quer entrar em uma sala já existente?{" "}
-            <Link as={RouterLink} to="/" color={"#e559f9"}>
+            <Link as={RouterLink} to="/rooms/join" color={"secondaryApp.500"}>
               Clique aqui
             </Link>
           </Text>

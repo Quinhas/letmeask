@@ -20,32 +20,33 @@ import { Link as RouterLink, useHistory } from "react-router-dom";
 type FormValues = {
   email: string;
   password: string;
+  name: string;
 };
 
-type LoginFormProps = {
+type SignUpFormProps = {
   initialEmail?: string;
   initialPassword?: string;
 };
 
 const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   const [loading, setLoading] = useState(false);
-  const { signInWithEmailAndPassword } = useAuth();
-  const { touched, errors, isValid, handleBlur, handleChange } =
-    props;
+  const { createUserWithEmailAndPassword } = useAuth();
+  const { touched, errors, isValid, handleBlur, handleChange } = props;
   const { colorMode } = useColorMode();
   const toast = useToast();
   const history = useHistory();
 
-  async function handleLoginButton(ev: FormEvent) {
+  async function handleSignUpButton(ev: FormEvent) {
     ev.preventDefault();
     setLoading(true);
     try {
-      await signInWithEmailAndPassword(
+      await createUserWithEmailAndPassword(
         props.values.email,
-        props.values.password
+        props.values.password,
+        props.values.name
       );
       toast({
-        description: "Usuário logado com sucesso.",
+        description: "Usuário registrado com sucesso.",
         status: "success",
         isClosable: true,
       });
@@ -103,6 +104,25 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         />
         <FormErrorMessage>{errors.password}</FormErrorMessage>
       </FormControl>
+      <FormControl isInvalid={errors.name && touched.name ? true : false}>
+        <Input
+          as={Field}
+          id="name"
+          type="name"
+          name="name"
+          placeholder="Nome"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          bg={colorMode === "light" ? "white" : "black"}
+          color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
+          h={"3.125rem"}
+          borderRadius={"0.5rem"}
+          p={"0 1rem"}
+          border={"1px solid"}
+          w={"100%"}
+        />
+        <FormErrorMessage>{errors.name}</FormErrorMessage>
+      </FormControl>
 
       <Button
         type="submit"
@@ -111,17 +131,17 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
         mt={"1rem"}
         rightIcon={<FaSignInAlt />}
         isLoading={loading}
-        onClick={handleLoginButton}
+        onClick={handleSignUpButton}
         disabled={!touched.email || !isValid || loading}
       >
-        Login
+        Registrar-se
       </Button>
       <Text
         fontSize={"0.875rem"}
         color={colorMode === "light" ? "blackAlpha.600" : "whiteAlpha.600"}
       >
-        Ainda não é registrado?{" "}
-        <Link as={RouterLink} to="/signup" color={"secondaryApp.500"}>
+        Já possui uma conta?{" "}
+        <Link as={RouterLink} to="/login" color={"secondaryApp.500"}>
           Clique aqui
         </Link>
       </Text>
@@ -129,12 +149,13 @@ const InnerForm = (props: OtherProps & FormikProps<FormValues>) => {
   );
 };
 
-export const LoginForm = withFormik<LoginFormProps, FormValues>({
+export const SignUpForm = withFormik<SignUpFormProps, FormValues>({
   // Transform outer props into form values
   mapPropsToValues: (props) => {
     return {
       email: "",
       password: "",
+      name: "",
     };
   },
 
@@ -142,10 +163,13 @@ export const LoginForm = withFormik<LoginFormProps, FormValues>({
   validate: (values: FormValues) => {
     let errors: FormikErrors<FormValues> = {};
     if (!values.email) {
-      errors.email = "Informe um e-mail";
+      errors.email = "O e-mail é requerido.";
     }
     if (!values.password) {
       errors.password = "A senha é requerida.";
+    }
+    if (!values.name) {
+      errors.name = "O nome é requerido.";
     }
     if (values.password.length < 6) {
       errors.password = "A senha deve possuir mais de 6 caracteres.";

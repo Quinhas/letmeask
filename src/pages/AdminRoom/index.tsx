@@ -19,7 +19,12 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { FaRegTimesCircle, FaRegTrashAlt } from "react-icons/fa";
+import {
+  FaRegCheckCircle,
+  FaRegCommentAlt,
+  FaRegTimesCircle,
+  FaRegTrashAlt,
+} from "react-icons/fa";
 import { useHistory, useParams } from "react-router-dom";
 import { Logo } from "src/components/Logo";
 import { Question } from "src/components/Question";
@@ -45,7 +50,6 @@ export function AdminRoom() {
   const [modalContent, setModalContent] = useState<
     "deleteQuestion" | "endRoom" | undefined
   >();
-  const [loading, setLoading] = useState(true);
   const toast = useToast();
   const history = useHistory();
 
@@ -53,6 +57,9 @@ export function AdminRoom() {
   const { questions, title, authorId } = useRoom(roomId);
 
   useEffect(() => {
+    if (!authorId) {
+      return;
+    }
     if (authorId !== user?.id) {
       history.push("/unauthorized");
     }
@@ -64,6 +71,58 @@ export function AdminRoom() {
     onOpen();
   }
 
+  async function handleCheckQuestionAsAnswered(
+    questionId: string,
+    isAnswered: boolean
+  ) {
+    try {
+      await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+        isAnswered: !isAnswered,
+      });
+      toast({
+        description: "Pergunta atualizada com sucesso.",
+        status: "success",
+        isClosable: true,
+        position: "bottom-left",
+      });
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+    setQuestion("");
+    onClose();
+  }
+
+  async function handleHighlightQuestion(
+    questionId: string,
+    isHighlighted: boolean
+  ) {
+    try {
+      await database.ref(`rooms/${roomId}/questions/${questionId}`).update({
+        isHighlighted: !isHighlighted,
+      });
+      toast({
+        description: "Pergunta atualizada com sucesso.",
+        status: "success",
+        isClosable: true,
+        position: "bottom-left",
+      });
+    } catch (error) {
+      toast({
+        description: error.message,
+        status: "error",
+        isClosable: true,
+        position: "bottom-left",
+      });
+    }
+    setQuestion("");
+    onClose();
+  }
+
   async function handleConfirmDeleteQuestion() {
     try {
       await database.ref(`rooms/${roomId}/questions/${question}`).remove();
@@ -71,12 +130,14 @@ export function AdminRoom() {
         description: "Pergunta excluída com sucesso.",
         status: "success",
         isClosable: true,
+        position: "bottom-left",
       });
     } catch (error) {
       toast({
         description: error.message,
         status: "error",
         isClosable: true,
+        position: "bottom-left",
       });
     }
     setQuestion("");
@@ -97,6 +158,7 @@ export function AdminRoom() {
         description: "Sala encerrada com sucesso.",
         status: "success",
         isClosable: true,
+        position: "bottom-left",
       });
       history.push("/");
     } catch (error) {
@@ -104,6 +166,7 @@ export function AdminRoom() {
         description: error.message,
         status: "error",
         isClosable: true,
+        position: "bottom-left",
       });
     }
     onClose();
@@ -125,29 +188,27 @@ export function AdminRoom() {
         direction={{ base: "column", md: "row" }}
         gridGap={"0.5rem"}
       >
-        <Flex alignSelf={"center"}>
+        <Flex gridGap={"0.5rem"}>
           <Link as={RouterLink} to="/">
-            <Logo style={{ maxHeight: "2.875rem" }} />
+            <Logo style={{ maxHeight: "2.875rem", width: "auto" }} />
           </Link>
+          <Button
+            colorScheme={"primaryApp"}
+            variant={"outline"}
+            flex={1}
+            onClick={handleEndRoom}
+          >
+            Encerrar Sala
+          </Button>
         </Flex>
         <Flex gridGap={"0.5rem"} direction={{ base: "column", md: "row" }}>
           <RoomCode code={roomId} />
-          <Flex gridGap={"0.5rem"}>
-            <Button
-              colorScheme={"primaryApp"}
-              variant={"outline"}
-              flex={1}
-              onClick={handleEndRoom}
-            >
-              Encerrar Sala
-            </Button>
-            <ToggleTheme />
-          </Flex>
+          <ToggleTheme />
         </Flex>
       </Flex>
 
       <Box as={"main"} maxW={{ base: "80%", md: "60%" }} margin={"0 auto"}>
-        <Flex margin={"2rem 0 1.5rem"} align={"center"}>
+        <Flex margin={"2rem 0 1.5rem"} align={"center"} gridGap={"1rem"}>
           <Heading
             fontSize={"1.5rem"}
             color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
@@ -156,12 +217,12 @@ export function AdminRoom() {
           </Heading>
           {questions.length > 0 && (
             <Text
-              ml={"1rem"}
-              bg={"#e559f9"}
-              borderRadius={"lg"}
+              textAlign="center"
+              bg={"secondaryApp.500"}
+              borderRadius={"md"}
               p={"0.5rem 1rem"}
               color={
-                colorMode === "light" ? "blackAlpha.900" : "whiteAlpha.900"
+                colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
               }
               fontWeight={500}
               fontSize={"0.875rem"}
@@ -169,6 +230,16 @@ export function AdminRoom() {
               {questions.length} pergunta{questions.length > 1 && "s"}
             </Text>
           )}
+
+          <Button
+            colorScheme={"primaryApp"}
+            variant={"outline"}
+            as={RouterLink}
+            to={`/rooms/${roomId}`}
+            target={"_blank"}
+          >
+            Visualizar como usuário
+          </Button>
         </Flex>
 
         <Box mt={"2rem"}>
@@ -178,18 +249,89 @@ export function AdminRoom() {
                 key={question.id}
                 content={question.content}
                 author={question.author}
+                variant={
+                  question.isAnswered
+                    ? "answered"
+                    : question.isHighlighted
+                    ? "highlighted"
+                    : ""
+                }
               >
-                <IconButton
-                  aria-label="Delete question"
-                  type="button"
-                  icon={<FaRegTrashAlt />}
-                  border={0}
-                  variant={"ghost"}
-                  colorScheme={"primaryApp"}
-                  color={"gray.400"}
-                  _hover={{ color: "danger.500" }}
-                  onClick={() => handleDeleteQuestion(question.id)}
-                />
+                <Flex
+                  align={{ base: "flex-end", md: "center" }}
+                  gridGap={"0.5rem"}
+                  direction={{ base: "column", md: "row" }}
+                >
+                  {question.likeCount > 0 && (
+                    <Text
+                      p={"0.5rem"}
+                      bg={
+                        colorMode === "light"
+                          ? "blackAlpha.100"
+                          : "whiteAlpha.100"
+                      }
+                      borderRadius={'md'}
+                      fontSize={"0.875rem"}
+                      color={
+                        colorMode === "light"
+                          ? "blackAlpha.600"
+                          : "whiteAlpha.600"
+                      }
+                    >
+                      {question.likeCount} curtida
+                      {question.likeCount > 1 && "s"}
+                    </Text>
+                  )}
+                  <ButtonGroup>
+                    <IconButton
+                      aria-label="Mark question as answered"
+                      type="button"
+                      icon={<FaRegCheckCircle />}
+                      border={0}
+                      variant={"ghost"}
+                      colorScheme={"primaryApp"}
+                      color={
+                        question.isAnswered ? "primaryApp.500" : "gray.400"
+                      }
+                      _hover={{ color: "secondaryApp.500" }}
+                      onClick={() =>
+                        handleCheckQuestionAsAnswered(
+                          question.id,
+                          question.isAnswered
+                        )
+                      }
+                    />
+                    {!question.isAnswered && (
+                      <IconButton
+                        aria-label="Highlight question"
+                        type="button"
+                        icon={<FaRegCommentAlt />}
+                        border={0}
+                        variant={"ghost"}
+                        colorScheme={"secondaryApp"}
+                        color={"gray.400"}
+                        _hover={{ color: "secondaryApp.500" }}
+                        onClick={() =>
+                          handleHighlightQuestion(
+                            question.id,
+                            question.isHighlighted
+                          )
+                        }
+                      />
+                    )}
+                    <IconButton
+                      aria-label="Delete question"
+                      type="button"
+                      icon={<FaRegTrashAlt />}
+                      border={0}
+                      variant={"ghost"}
+                      colorScheme={"danger"}
+                      color={"gray.400"}
+                      _hover={{ color: "danger.500" }}
+                      onClick={() => handleDeleteQuestion(question.id)}
+                    />
+                  </ButtonGroup>
+                </Flex>
               </Question>
             );
           })}

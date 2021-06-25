@@ -2,16 +2,15 @@ import { useHistory } from "react-router-dom";
 
 import { FaDoorOpen, FaPlus } from "react-icons/fa";
 
-import { useAuth } from "src/hooks/useAuth";
 import { FormEvent, useState } from "react";
 import { database } from "src/services/firebase";
 import { Flex, Button, Input, useColorMode, LightMode } from "@chakra-ui/react";
 import { Logo } from "src/components/Logo";
 import { Aside } from "src/components/Aside";
+import { Link as RouterLink } from "react-router-dom";
 
-export function Home() {
+export function JoinRoom() {
   const history = useHistory();
-  const { user, signInWithGoogle } = useAuth();
   const [roomCode, setRoomCode] = useState("");
   const { colorMode } = useColorMode();
 
@@ -22,7 +21,6 @@ export function Home() {
     }
 
     const roomRef = await database.ref(`rooms/${roomCode}`).get();
-    console.log(roomRef);
     if (!roomRef.exists()) {
       alert("Room does not exists.");
       return;
@@ -40,13 +38,19 @@ export function Home() {
     <Flex
       align={"stretch"}
       minH={"100vh"}
-      direction={{ base: "column", md: "row" }}
+      direction={{ base: "column-reverse", md: "row" }}
     >
       <Aside
         heading={"Toda pergunta tem uma resposta."}
         text={"Aprenda e compartilhe conhecimento com outras pessoas"}
       />
-      <Flex flex={8} m={"2rem"} align={"center"} justify={"center"}>
+      <Flex
+        flex={8}
+        mx={"2rem"}
+        my={"1rem"}
+        align={"center"}
+        justify={"center"}
+      >
         <Flex
           className="main-content"
           direction={"column"}
@@ -55,7 +59,7 @@ export function Home() {
           align={"stretch"}
           textAlign={"center"}
         >
-          <Flex alignSelf={"center"}>
+          <Flex alignSelf={"center"} as={RouterLink} to="/">
             <Logo />
           </Flex>
           <LightMode>
@@ -63,7 +67,7 @@ export function Home() {
               leftIcon={<FaPlus />}
               colorScheme={"secondaryApp"}
               onClick={() => history.push("/rooms/new")}
-              mt={"4rem"}
+              mt={"2rem"}
               h={"3.125rem"}
               fontWeight={500}
             >
@@ -118,6 +122,7 @@ export function Home() {
               variant={"app"}
               w={"100%"}
               mt={"1rem"}
+              disabled={!roomCode}
             >
               Entrar na sala
             </Button>
