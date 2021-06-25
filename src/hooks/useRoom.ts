@@ -61,9 +61,14 @@ export function useRoom(roomId: string) {
           };
         }
       );
+
+      const questionsSorted = parsedQuestions
+        .sort((a, b) => a.likeCount - b.likeCount)
+        .reverse();
+
       setTitle(databaseRoom.title);
       setAuthorId(databaseRoom.authorId);
-      setQuestions(parsedQuestions);
+      setQuestions(questionsSorted);
     });
 
     return () => {

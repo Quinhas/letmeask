@@ -1,3 +1,4 @@
+import { Text, Flex, Spinner, useColorMode } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
 import { useEffect } from "react";
 import { createContext } from "react";
@@ -22,6 +23,8 @@ export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthContextProvider(props: AuthContextProviderProps) {
   const [user, setUser] = useState<User>();
+  const [loading, setLoading] = useState(true);
+  const { colorMode } = useColorMode();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -37,6 +40,7 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
           avatar: photoURL,
         });
       }
+      setLoading(false);
     });
 
     return () => {
@@ -59,6 +63,32 @@ export function AuthContextProvider(props: AuthContextProviderProps) {
         avatar: photoURL,
       });
     }
+  }
+
+  if (loading) {
+    return (
+      <Flex w={"100vw"} h={"100vh"} align={"center"} justify={"center"}>
+        <Flex
+          direction={"column"}
+          align="center"
+          gridGap={"1.5rem"}
+          bg={colorMode === "light" ? "white" : "black"}
+          boxShadow={"md"}
+          py={"2rem"}
+          px={"4rem"}
+          borderRadius={"md"}
+        >
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xl"
+          />
+          <Text color="gray.500">Carregando...</Text>
+        </Flex>
+      </Flex>
+    );
   }
 
   return (

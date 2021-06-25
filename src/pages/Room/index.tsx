@@ -67,6 +67,9 @@ export function Room() {
     questionId: string,
     likeId: string | undefined
   ) {
+    if (!user?.id) {
+      return;
+    }
     if (likeId) {
       await database
         .ref(`rooms/${roomId}/questions/${questionId}/likes/${likeId}`)
@@ -100,7 +103,6 @@ export function Room() {
           </Link>
         </Flex>
         <Flex gridGap={"0.5rem"}>
-          <RoomCode code={roomId} />
           <ToggleTheme />
         </Flex>
       </Flex>

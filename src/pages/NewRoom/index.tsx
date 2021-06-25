@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { ToggleTheme } from "src/components/ToggleTheme";
 import { Logo } from "src/components/Logo";
+import { Aside } from "src/components/Aside";
 
 export function NewRoom() {
   const { user } = useAuth();
@@ -54,49 +55,10 @@ export function NewRoom() {
       h={"100vh"}
       direction={{ base: "column", md: "row" }}
     >
-      <Flex
-        flex={7}
-        direction={"column"}
-        justify={"space-between"}
-        bg={"primaryApp.500"}
-        color={"white"}
-        gridGap={"2rem"}
-      >
-        <Flex px={"5rem"} pt={"2rem"}>
-          <ToggleTheme />
-        </Flex>
-        <Flex
-          flexDirection={"column"}
-          justify={"center"}
-          px={"5rem"}
-          pb={"5rem"}
-        >
-          {!isMobile && (
-            <Image
-              src={illustrationImg}
-              maxW={"20rem"}
-              alt="Ilustração simbolizando perguntas e respostas"
-            />
-          )}
-          <Heading
-            fontWeight="700"
-            fontSize={"2.5rem"}
-            lineHeight={"2.625rem"}
-            mt={"1rem"}
-            color={colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"}
-          >
-            Crie salas de Q&amp;A ao-vivo
-          </Heading>
-          <Text
-            fontSize={"1.5rem"}
-            lineHeight={"2rem"}
-            mt={"1rem"}
-            color={colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"}
-          >
-            Tire as dúvidas da sua audiência em tempo-real
-          </Text>
-        </Flex>
-      </Flex>
+      <Aside
+        heading={"Toda pergunta tem uma resposta."}
+        text={"Aprenda e compartilhe conhecimento com outras pessoas"}
+      />
       <Flex flex={8} m={"0 2rem"} align={"center"} justify={"center"}>
         <Flex
           w={"100%"}

@@ -1,19 +1,49 @@
 import { useHistory } from "react-router-dom";
 
-import { FaDoorOpen, FaPlus } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 
 import { useAuth } from "src/hooks/useAuth";
 import { FormEvent, useState } from "react";
 import { database } from "src/services/firebase";
-import { Flex, Button, Input, useColorMode, LightMode } from "@chakra-ui/react";
+import {
+  Flex,
+  Button,
+  Input,
+  useColorMode,
+  LightMode,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  OtherProps,
+} from "@chakra-ui/react";
 import { Logo } from "src/components/Logo";
 import { Aside } from "src/components/Aside";
+import { Field, Formik, FormikHelpers, FormikProps } from "formik";
+import { LoginForm } from "src/components/LoginForm";
 
-export function Home() {
+type FormValues = {
+  email: string;
+  password: string;
+};
+
+export function Login() {
   const history = useHistory();
   const { user, signInWithGoogle } = useAuth();
   const [roomCode, setRoomCode] = useState("");
   const { colorMode } = useColorMode();
+
+  async function handleGoogleButton() {
+    if (!user) {
+      await signInWithGoogle();
+    }
+
+    history.push("/rooms/");
+  }
+
+  async function handleLoginWithEmail(
+    values: { email: string },
+    actions: FormikHelpers<FormValues>
+  ) {}
 
   async function handleJoinRoom(ev: FormEvent) {
     ev.preventDefault();
@@ -42,10 +72,7 @@ export function Home() {
       minH={"100vh"}
       direction={{ base: "column", md: "row" }}
     >
-      <Aside
-        heading={"Toda pergunta tem uma resposta."}
-        text={"Aprenda e compartilhe conhecimento com outras pessoas"}
-      />
+      <Aside />
       <Flex flex={8} m={"2rem"} align={"center"} justify={"center"}>
         <Flex
           className="main-content"
@@ -60,14 +87,14 @@ export function Home() {
           </Flex>
           <LightMode>
             <Button
-              leftIcon={<FaPlus />}
-              colorScheme={"secondaryApp"}
-              onClick={() => history.push("/rooms/new")}
+              leftIcon={<FaGoogle />}
+              colorScheme={"google"}
+              onClick={handleGoogleButton}
               mt={"4rem"}
               h={"3.125rem"}
               fontWeight={500}
             >
-              Crie sua sala
+              Faça login com o Google
             </Button>
           </LightMode>
           <Flex
@@ -94,34 +121,9 @@ export function Home() {
               marginLeft: "1rem",
             }}
           >
-            ou entre em uma sala
+            ou
           </Flex>
-          <form onSubmit={handleJoinRoom}>
-            <Input
-              type="text"
-              placeholder="Digite o código da sala"
-              value={roomCode}
-              onChange={(event) => setRoomCode(event.target.value)}
-              bg={colorMode === "light" ? "white" : "black"}
-              color={
-                colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"
-              }
-              h={"3.125rem"}
-              borderRadius={"0.5rem"}
-              p={"0 1rem"}
-              border={"1px solid"}
-              w={"100%"}
-            />
-            <Button
-              leftIcon={<FaDoorOpen />}
-              type="submit"
-              variant={"app"}
-              w={"100%"}
-              mt={"1rem"}
-            >
-              Entrar na sala
-            </Button>
-          </form>
+          <LoginForm />
         </Flex>
       </Flex>
     </Flex>
