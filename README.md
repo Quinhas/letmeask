@@ -10,6 +10,12 @@
   <img src="https://img.shields.io/github/stars/Quinhas/letmeask?label=stars&message=MIT&color=5965E0&labelColor=121214" alt="Stars">
 </p>
 
+<h1 align="center">
+    <img alt="Letmeask" src=".github/cover.svg" />
+</h1>
+
+<br>
+
 ## 💻 Projeto
 
 [Let Me Ask](https://podcastr-quinhas.vercel.app/) é um projeto desenvolvido durante a [Next Level Week #6](https://nextlevelweek.com/), apresentado pela [Rocketseat](https://rocketseat.com.br) entre 20 a 27 de Junho de 2021. 💜
@@ -18,7 +24,7 @@
 - [x] Aula 2
 - [x] Aula 3
 - [x] Aula 4
-- [ ] Aula 5
+- [x] Aula 5
 
 ## ✨ Tecnologias
 
@@ -53,8 +59,9 @@ $ yarn start
 
 ## 🔥 Desafios
 
-- [ ] Responsivo
+- [x] Responsivo (alguns bugs ainda podem ocorrer, caso ocorra, contate-me por favor)
 - [x] Dark Theme
+- [ ] PWA
 
 ## 📝 Licença
 
