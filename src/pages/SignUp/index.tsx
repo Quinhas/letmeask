@@ -1,6 +1,3 @@
-import { useHistory } from "react-router-dom";
-
-import { useAuth } from "src/hooks/useAuth";
 import { Flex } from "@chakra-ui/react";
 import { Logo } from "src/components/Logo";
 import { Aside } from "src/components/Aside";
