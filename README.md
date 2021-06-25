@@ -18,7 +18,7 @@
 
 ## 💻 Projeto
 
-[Let Me Ask](https://podcastr-quinhas.vercel.app/) é um projeto desenvolvido durante a [Next Level Week #6](https://nextlevelweek.com/), apresentado pela [Rocketseat](https://rocketseat.com.br) entre 20 a 27 de Junho de 2021. 💜
+[Let Me Ask](https://letmeask-quinhas.vercel.app/) é um projeto desenvolvido durante a [Next Level Week #6](https://nextlevelweek.com/), apresentado pela [Rocketseat](https://rocketseat.com.br) entre 20 a 27 de Junho de 2021. 💜
 
 - [x] Aula 1
 - [x] Aula 2
