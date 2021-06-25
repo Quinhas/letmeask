@@ -208,38 +208,49 @@ export function AdminRoom() {
       </Flex>
 
       <Box as={"main"} maxW={{ base: "80%", md: "60%" }} margin={"0 auto"}>
-        <Flex margin={"2rem 0 1.5rem"} align={"center"} gridGap={"1rem"}>
+        <Flex
+          margin={"2rem 0 1.5rem"}
+          align={{ base: "flex-start", md: "center" }}
+          direction={{ base: "column", md: "row" }}
+          gridGap={"1rem"}
+        >
           <Heading
             fontSize={"1.5rem"}
             color={colorMode === "light" ? "blackAlpha.800" : "whiteAlpha.800"}
           >
             Sala {title}
           </Heading>
-          {questions.length > 0 && (
-            <Text
-              textAlign="center"
-              bg={"secondaryApp.500"}
-              borderRadius={"md"}
-              p={"0.5rem 1rem"}
-              color={
-                colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
-              }
-              fontWeight={500}
-              fontSize={"0.875rem"}
-            >
-              {questions.length} pergunta{questions.length > 1 && "s"}
-            </Text>
-          )}
+          <Flex gridGap={"1rem"}>
+            {questions.length > 0 && (
+              <Flex
+                bg={"secondaryApp.500"}
+                borderRadius={"md"}
+                p={"0.5rem 1rem"}
+                align={"center"}
+                justify={"center"}
+              >
+                <Text
+                  color={
+                    colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
+                  }
+                  fontWeight={500}
+                  fontSize={"0.875rem"}
+                >
+                  {questions.length} pergunta{questions.length > 1 && "s"}
+                </Text>
+              </Flex>
+            )}
 
-          <Button
-            colorScheme={"primaryApp"}
-            variant={"outline"}
-            as={RouterLink}
-            to={`/rooms/${roomId}`}
-            target={"_blank"}
-          >
-            Visualizar como usuário
-          </Button>
+            <Button
+              colorScheme={"primaryApp"}
+              variant={"outline"}
+              as={RouterLink}
+              to={`/rooms/${roomId}`}
+              target={"_blank"}
+            >
+              Visualizar como usuário
+            </Button>
+          </Flex>
         </Flex>
 
         <Box mt={"2rem"}>
@@ -270,7 +281,7 @@ export function AdminRoom() {
                           ? "blackAlpha.100"
                           : "whiteAlpha.100"
                       }
-                      borderRadius={'md'}
+                      borderRadius={"md"}
                       fontSize={"0.875rem"}
                       color={
                         colorMode === "light"

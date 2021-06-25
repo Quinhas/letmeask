@@ -125,18 +125,23 @@ export function Room() {
             Sala {title}
           </Heading>
           {questions.length > 0 && (
-            <Text
+            <Flex
               bg={"secondaryApp.500"}
               borderRadius={"md"}
               p={"0.5rem 1rem"}
-              color={
-                colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
-              }
-              fontWeight={500}
-              fontSize={"0.875rem"}
+              align={"center"}
+              justify={"center"}
             >
-              {questions.length} pergunta{questions.length > 1 && "s"}
-            </Text>
+              <Text
+                color={
+                  colorMode === "light" ? "whiteAlpha.900" : "blackAlpha.900"
+                }
+                fontWeight={500}
+                fontSize={"0.875rem"}
+              >
+                {questions.length} pergunta{questions.length > 1 && "s"}
+              </Text>
+            </Flex>
           )}
         </Flex>
 
